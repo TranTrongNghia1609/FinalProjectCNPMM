@@ -5,8 +5,8 @@ const {
   getUser,
   getAccount,
 } = require("../controllers/userController");
-// const auth = require("../middleware/auth");
-// const delay = require("../middleware/delay");
+const auth = require("../middleware/auth");
+const delay = require("../middleware/delay");
 const routerAPI = express.Router();
 //routerAPI.all("*", auth);
 routerAPI.get("/", (req, res) => {
@@ -14,6 +14,9 @@ routerAPI.get("/", (req, res) => {
 });
 routerAPI.post("/register", createUser);
 routerAPI.post("/login", handleLogin);
-routerAPI.get("/user", getUser);
-//routerAPI.get("/account", delay, getAccount);
+
+
+// Route cần bảo vệ - thêm middleware auth
+routerAPI.get("/user", auth, getUser);
+routerAPI.get("/account", auth, delay, getAccount);
 module.exports = routerAPI; //export default

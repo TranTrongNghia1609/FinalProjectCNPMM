@@ -1,10 +1,10 @@
-const userService = require("../services/userServices");
+const {createUserService, loginService, getUserService} = require("../services/userServices");
 
 // Đăng ký (Register)
 const createUser = async (req, res) => {
   try {
-    const data = req.body; 
-    const user = await userService.createUserService(data);
+    const {name, email, password} = req.body; 
+    const user = await createUserService(name, email, password);
 
     return res.status(201).json({
       message: "User registered successfully!",
@@ -20,9 +20,9 @@ const createUser = async (req, res) => {
 // Đăng nhập (Login)
 const handleLogin = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    const user = await userService.login(username, password);
+    const user = await loginService(email, password);
     return res.status(200).json({
       message: "Login successful!",
       user,
@@ -36,33 +36,14 @@ const handleLogin = async (req, res) => {
 
 // Lấy thông tin 1 user theo id
 const getUser = async (req, res) => {
-  try {
-    const { id } = req.params; // /user/:id
-    const user = await userService.getUserById(id);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found!" });
-    }
-
-    return res.status(200).json(user);
-  } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
-  }
-};
+  const data = await getUserService();
+  return res.status(200).json(data)
+}
 
 // Lấy tất cả users
 const getAccount = async (req, res) => {
-  try {
-    const users = await userService.getAllUsers();
-    return res.status(200).json(users);
-  } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
-  }
-};
+  return res.status(200).json(req.user)
+}
 
 module.exports = {
   createUser,
